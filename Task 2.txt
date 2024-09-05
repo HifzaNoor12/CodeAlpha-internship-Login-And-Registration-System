@@ -1,0 +1,87 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+bool fileExists(const string& filename)
+{
+    ifstream file(filename);
+    return file.good();
+}
+
+bool login()
+{
+    string username, password, stored_username, stored_password;
+    cout<<"enter username: ";
+    cin>>username;
+    cout<<"enter password: ";
+    cin>>password;
+    if(!fileExists(username + ".txt")) // Check if the file exists
+    {
+        cout << "username does not exist." << endl;
+        return false;
+    }
+    ifstream userFileIn(username + ".txt");
+    if (userFileIn.is_open())
+    {
+        getline(userFileIn, stored_username);
+        getline(userFileIn, stored_password);
+        userFileIn.close();
+        if (username == stored_username && password == stored_password)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void createFile(const string &username, const string &password)
+{
+    ofstream userFileOut(username + ".txt");
+    userFileOut<<username<<endl;
+    userFileOut<<password<<endl;
+    userFileOut.close();
+}
+
+void registration()
+{
+    string username, password;
+    cout << "enter username: ";
+    cin >> username;
+    if(fileExists(username + ".txt")) // Check if the file already exists 
+    {
+        cout<<"file already exists."<<endl;
+        return;
+    }
+    cout<<"enter password: ";
+    cin>>password;
+    createFile(username, password);
+    cout<<"registration successful!"<<endl;
+}
+
+int main()
+{
+    int choice;
+    cout << "1. Register\n";
+    cout << "2. Login\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+    switch (choice)
+    {
+    case 1:
+        registration();
+        break;
+    case 2:
+        if (login())
+        {
+            cout<<"login successful!"<<endl;
+        }
+        else
+        {
+            cout<<"Login failed! incorrect username or password."<<endl;
+        }
+        break;
+    default:
+        cout<<"Invalid choice"<<endl;
+    }
+    return 0;
+}
